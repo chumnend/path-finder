@@ -1,0 +1,12 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100vw;
+  height: auto;
+  position: relative;
+  z-index: 0;
+  font-size: 100%;
+}
