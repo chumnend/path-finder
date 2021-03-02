@@ -1,19 +1,26 @@
+// Create initial visited array
+const visited = [];
 const rows = 10;
 const cols = 10;
 
-const visited = [];
 for (let i = 0; i < rows; i++) {
   visited.push(new Array(cols).fill(false));
 }
+
+// draw initial table to page
+createTable();
 
 function createTable() {
   const board = document.getElementById("board");
   const tbody = document.createElement("tbody");
 
-  for (let i = 0; i < rows; i++) {
+  const numRows = visited.length;
+  const numCols = visited[0].length;
+
+  for (let i = 0; i < numRows; i++) {
     const tr = document.createElement("tr");
 
-    for (let j = 0; j < cols; j++) {
+    for (let j = 0; j < numCols; j++) {
       const td = document.createElement("td");
       td.setAttribute("id", `${i}-${j}`);
       td.addEventListener("click", toggleVisited);
@@ -30,13 +37,15 @@ function createTable() {
 function updateTable() {
   const board = document.getElementById("board");
   const prevBody = document.getElementsByTagName("tbody")[0];
-
   const tbody = document.createElement("tbody")
 
-  for (let i = 0; i < rows; i++) {
+  const numRows = visited.length;
+  const numCols = visited[0].length;
+
+  for (let i = 0; i < numRows; i++) {
     const tr = document.createElement("tr");
 
-    for (let j = 0; j < cols; j++) {
+    for (let j = 0; j < numCols; j++) {
       const td = document.createElement("td");
       td.setAttribute("id", `${i}-${j}`);
       td.addEventListener("click", toggleVisited);
@@ -63,4 +72,16 @@ function toggleVisited(e) {
   updateTable()
 }
 
-createTable();
+function visualize() {
+  alert("Not yet implmented");
+}
+
+function reset() {
+  visited.forEach((row, rowIdx) => {
+    row.forEach((_, colIdx) => {
+      visited[colIdx][rowIdx] = false;
+    })
+  });
+
+  updateTable();
+}
