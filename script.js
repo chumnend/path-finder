@@ -52,7 +52,13 @@ function visualize() {
 }
 
 function reset() {
-  alert("Not implemented");
+  for (let i = 0; i < boardRows; i++) {
+    for (let j = 0; j < boardCols; j++) {
+      board[i][j] = false;
+    }
+  }
+
+  drawBoard();
 }
 
 function toggleVisited(e) {
