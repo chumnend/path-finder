@@ -1,60 +1,38 @@
-// Create initial gBoard array
-let gBoard;
+window.addEventListener("load", function() {
+  init(); 
+});
 
-initializeBoard(10, 10);
-createTable();
+const board = [];
+const boardRows = 10;
+const boardCols = 10;
 
-function initializeBoard(rows, cols) {
-  const newBoard = [];
-
-  for (let i = 0; i < rows; i++) {
-    newBoard.push(new Array(cols).fill(false));
+function init() {
+  // create empty board
+  for (let i = 0; i < boardRows; i++) {
+    let row = [];
+    for(let j = 0; j < boardCols; j++) {
+      row.push(false);
+    }
+    board.push(row);
   }
 
-  gBoard = newBoard;
+  // draw the initial empty board
+  drawBoard();
 }
 
-function createTable() {
-  const board = document.getElementById("board");
+function drawBoard() {
+  const table = document.getElementById("board");
   const tbody = document.createElement("tbody");
 
-  const numRows = gBoard.length;
-  const numCols = gBoard[0].length;
-
-  for (let i = 0; i < numRows; i++) {
+  for (let i = 0; i < boardRows; i++) {
     const tr = document.createElement("tr");
 
-    for (let j = 0; j < numCols; j++) {
+    for (let j = 0; j < boardCols; j++) {
       const td = document.createElement("td");
       td.setAttribute("id", `${i}-${j}`);
       td.addEventListener("click", toggleVisited);
 
-      tr.appendChild(td);
-    }
-
-    tbody.appendChild(tr);
-  }
-
-  board.appendChild(tbody);
-}
-
-function updateTable() {
-  const board = document.getElementById("board");
-  const prevBody = document.getElementsByTagName("tbody")[0];
-  const tbody = document.createElement("tbody")
-
-  const numRows = gBoard.length;
-  const numCols = gBoard[0].length;
-
-  for (let i = 0; i < numRows; i++) {
-    const tr = document.createElement("tr");
-
-    for (let j = 0; j < numCols; j++) {
-      const td = document.createElement("td");
-      td.setAttribute("id", `${i}-${j}`);
-      td.addEventListener("click", toggleVisited);
-
-      if (gBoard[j][i] == true) {
+      if (board[i][j] == true) {
         td.classList.add("visited");
       }
 
@@ -64,28 +42,24 @@ function updateTable() {
     tbody.appendChild(tr);
   }
 
-  board.replaceChild(tbody, prevBody);
+  table.textContent = '';
+  table.appendChild(tbody);
+}
+
+// BUTTON FUNCTIONS =======================================
+function visualize() {
+  alert("Not implemented");
+}
+
+function reset() {
+  alert("Not implemented");
 }
 
 function toggleVisited(e) {
   const coord = e.target.id.split("-");
-  const col = parseInt(coord[0]);
-  const row = parseInt(coord[1]);
+  const row = parseInt(coord[0]);
+  const col = parseInt(coord[1]);
 
-  gBoard[row][col] = !gBoard[row][col];
-  updateTable()
-}
-
-function visualize() {
-  alert("Not yet implmented");
-}
-
-function reset() {
-  gBoard.forEach((row, rowIdx) => {
-    row.forEach((_, colIdx) => {
-      gBoard[colIdx][rowIdx] = false;
-    })
-  });
-
-  updateTable();
+  board[row][col] = !board[row][col];
+  drawBoard()
 }

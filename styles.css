@@ -33,6 +33,15 @@ header {
   border: 1px solid black;
 }
 
+.btn-group {
+  padding: 8px;
+  display: flex;
+  gap: 10px;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+}
+
 .visited {
   background-color: blue;
 }
