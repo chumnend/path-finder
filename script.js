@@ -61,7 +61,7 @@ function drawBoard() {
 
 // BUTTON FUNCTIONS =======================================
 function visualize() {
-  alert("Not implemented");
+  bfs();
 }
 
 function reset() {
@@ -84,4 +84,50 @@ function toggleVisited(e) {
 }
 
 // PATHFINDING ALGORITHMS =================================
-function bfs() {}
+function bfs() {
+  let visited = new Set();
+  let queue = [];
+  queue.push(start);
+
+  while(queue.length > 0) {
+    let cell = queue.shift();
+    visited.add(cell.toString());
+
+    if (cell.toString() === end.toString()) {
+      console.log(visited);
+      return;
+    }
+
+    for (let n of neighbors(cell[0], cell[1])) {
+      if (!visited.has(n.toString())) {
+        visited.add(n.toString());
+        queue.push(n);
+
+        board[n[0]][n[1]] = true;
+        drawBoard();
+      }
+    }
+  }
+}
+
+function neighbors(x, y) {
+  const cells = [];
+
+  if (x > 0) {
+    cells.push([x-1,y]);
+  }
+
+  if (x < boardRows - 1) {
+    cells.push([x+1,y]);
+  }
+
+  if (y > 0) {
+    cells.push([x,y-1]);
+  }
+
+  if (y < boardCols - 1) {
+    cells.push([x,y+1]);
+  }
+
+  return cells;
+}
