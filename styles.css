@@ -45,3 +45,12 @@ header {
 .visited {
   background-color: blue;
 }
+
+.start {
+  background-color: green;
+}
+
+.end {
+  background-color: red;
+}
+

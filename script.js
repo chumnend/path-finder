@@ -6,6 +6,9 @@ const board = [];
 const boardRows = 10;
 const boardCols = 10;
 
+const start = [0, 0];
+const end = [9, 9];
+
 function init() {
   // create empty board
   for (let i = 0; i < boardRows; i++) {
@@ -31,6 +34,16 @@ function drawBoard() {
       const td = document.createElement("td");
       td.setAttribute("id", `${i}-${j}`);
       td.addEventListener("click", toggleVisited);
+
+      let [startX, startY] = start;
+      if(i === startX && j === startY) {
+        td.classList.add("start")
+      } 
+
+      let [endX, endY] = end;
+      if(i === endX && j === endY) {
+        td.classList.add("end")
+      } 
 
       if (board[i][j] == true) {
         td.classList.add("visited");
@@ -69,3 +82,6 @@ function toggleVisited(e) {
   board[row][col] = !board[row][col];
   drawBoard()
 }
+
+// PATHFINDING ALGORITHMS =================================
+function bfs() {}
