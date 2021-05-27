@@ -1,3 +1,4 @@
+// INITALIZATION ==========================================
 window.addEventListener("load", function() {
   init(); 
 });
@@ -8,6 +9,8 @@ const boardCols = 10;
 
 const start = [0, 0];
 const end = [9, 9];
+
+let mode = 0 // 0 - no click, 1 - select start, 2 - select end
 
 function init() {
   // create empty board
@@ -23,6 +26,7 @@ function init() {
   drawBoard();
 }
 
+// GENERAL FUNCTIONS ======================================
 function drawBoard() {
   const table = document.getElementById("board");
   const tbody = document.createElement("tbody");
@@ -33,7 +37,7 @@ function drawBoard() {
     for (let j = 0; j < boardCols; j++) {
       const td = document.createElement("td");
       td.setAttribute("id", `${i}-${j}`);
-      td.addEventListener("click", toggleVisited);
+      td.addEventListener("click", handleClick);
 
       let [startX, startY] = start;
       if(i === startX && j === startY) {
@@ -60,6 +64,14 @@ function drawBoard() {
 }
 
 // BUTTON FUNCTIONS =======================================
+function setStart() {
+  mode = 1;
+}
+
+function setEnd() {
+  mode = 2;
+}
+
 function visualize() {
   bfs();
 }
@@ -74,13 +86,37 @@ function reset() {
   drawBoard();
 }
 
-function toggleVisited(e) {
-  const coord = e.target.id.split("-");
-  const row = parseInt(coord[0]);
-  const col = parseInt(coord[1]);
+// CLICK FUNCTIONS ========================================
+function handleClick(e)  {
+  const getCoord = (e) => {
+    const coord = e.target.id.split("-");
+    const row = parseInt(coord[0]);
+    const col = parseInt(coord[1]);
+  
+    return [row, col];
+  }
 
-  board[row][col] = !board[row][col];
-  drawBoard()
+  let newRow, newCol;
+
+  switch(mode) {
+    case 1:
+      // set new start point
+      [newRow, newCol] = getCoord(e);
+      start[0] = newRow;
+      start[1] = newCol;
+      break;
+    case 2:
+      // set ne end type
+      [newRow, newCol] = getCoord(e);
+      end[0] = newRow;
+      end[1] = newCol;
+      break;
+    default:
+      return;
+  }
+
+  mode = 0;
+  drawBoard();
 }
 
 // PATHFINDING ALGORITHMS =================================
@@ -109,6 +145,8 @@ function bfs() {
     }
   }
 }
+
+function astar() {}
 
 function neighbors(x, y) {
   const cells = [];
