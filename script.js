@@ -3,23 +3,24 @@ window.addEventListener("load", function() {
   init(); 
 });
 
-const board = [];
-const boardRows = 10;
-const boardCols = 10;
-
-const start = [0, 0];
-const end = [9, 9];
-
-let mode = 0 // 0 - no click, 1 - select start, 2 - select end
+const state = {
+  mode: 0, // 0 - no click, 1 - select start, 2 - select end
+  board: [],
+  rowCount: 10,
+  colCount: 10,
+  startPos: [0, 0],
+  endPos: [9, 9],
+}
 
 function init() {
   // create empty board
-  for (let i = 0; i < boardRows; i++) {
+  for (let i = 0; i < state.rowCount; i++) {
     let row = [];
-    for(let j = 0; j < boardCols; j++) {
+    for(let j = 0; j < state.colCount; j++) {
       row.push(false);
     }
-    board.push(row);
+
+    state.board.push(row);
   }
 
   // draw the initial empty board
@@ -31,25 +32,25 @@ function drawBoard() {
   const table = document.getElementById("board");
   const tbody = document.createElement("tbody");
 
-  for (let i = 0; i < boardRows; i++) {
+  for (let i = 0; i < state.rowCount; i++) {
     const tr = document.createElement("tr");
 
-    for (let j = 0; j < boardCols; j++) {
+    for (let j = 0; j < state.colCount; j++) {
       const td = document.createElement("td");
       td.setAttribute("id", `${i}-${j}`);
       td.addEventListener("click", handleClick);
 
-      let [startX, startY] = start;
+      let [startX, startY] = state.startPos;
       if(i === startX && j === startY) {
         td.classList.add("start")
       } 
 
-      let [endX, endY] = end;
+      let [endX, endY] = state.endPos;
       if(i === endX && j === endY) {
         td.classList.add("end")
       } 
 
-      if (board[i][j] == true) {
+      if (state.board[i][j] == true) {
         td.classList.add("visited");
       }
 
@@ -65,11 +66,11 @@ function drawBoard() {
 
 // BUTTON FUNCTIONS =======================================
 function setStart() {
-  mode = 1;
+  state.mode = 1;
 }
 
 function setEnd() {
-  mode = 2;
+  state.mode = 2;
 }
 
 function visualize() {
@@ -77,9 +78,9 @@ function visualize() {
 }
 
 function reset() {
-  for (let i = 0; i < boardRows; i++) {
-    for (let j = 0; j < boardCols; j++) {
-      board[i][j] = false;
+  for (let i = 0; i < state.rowCount; i++) {
+    for (let j = 0; j < state.colCount; j++) {
+      state.board[i][j] = false;
     }
   }
 
@@ -98,24 +99,24 @@ function handleClick(e)  {
 
   let newRow, newCol;
 
-  switch(mode) {
+  switch(state.mode) {
     case 1:
       // set new start point
       [newRow, newCol] = getCoord(e);
-      start[0] = newRow;
-      start[1] = newCol;
+      state.startPos[0] = newRow;
+      state.startPos[1] = newCol;
       break;
     case 2:
       // set ne end type
       [newRow, newCol] = getCoord(e);
-      end[0] = newRow;
-      end[1] = newCol;
+      state.endPos[0] = newRow;
+      state.endPos[1] = newCol;
       break;
     default:
       return;
   }
 
-  mode = 0;
+  state.mode = 0;
   drawBoard();
 }
 
@@ -123,13 +124,13 @@ function handleClick(e)  {
 function bfs() {
   let visited = new Set();
   let queue = [];
-  queue.push(start);
+  queue.push(state.startPos);
 
   while(queue.length > 0) {
     let cell = queue.shift();
     visited.add(cell.toString());
 
-    if (cell.toString() === end.toString()) {
+    if (cell.toString() === state.endPos.toString()) {
       console.log(visited);
       return;
     }
@@ -139,7 +140,7 @@ function bfs() {
         visited.add(n.toString());
         queue.push(n);
 
-        board[n[0]][n[1]] = true;
+        state.board[n[0]][n[1]] = true;
         drawBoard();
       }
     }
@@ -155,7 +156,7 @@ function neighbors(x, y) {
     cells.push([x-1,y]);
   }
 
-  if (x < boardRows - 1) {
+  if (x < state.rowCount - 1) {
     cells.push([x+1,y]);
   }
 
@@ -163,7 +164,7 @@ function neighbors(x, y) {
     cells.push([x,y-1]);
   }
 
-  if (y < boardCols - 1) {
+  if (y < state.colCount - 1) {
     cells.push([x,y+1]);
   }
 
