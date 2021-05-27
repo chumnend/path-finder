@@ -4,7 +4,8 @@ window.addEventListener("load", function() {
 });
 
 const state = {
-  mode: 0, // 0 - no click, 1 - select start, 2 - select end
+  clickMode: 0, // 0 - no click, 1 - select start, 2 - select end
+  visualizeMode: 0, // 0 - bfs
   board: [],
   rowCount: 10,
   colCount: 10,
@@ -66,15 +67,21 @@ function drawBoard() {
 
 // BUTTON FUNCTIONS =======================================
 function setStart() {
-  state.mode = 1;
+  state.clickMode = 1;
 }
 
 function setEnd() {
-  state.mode = 2;
+  state.clickMode = 2;
 }
 
 function visualize() {
-  bfs();
+  switch(state.visualizeMode) {
+    case 0:
+      bfs();
+      break;
+    default:
+      // do nothing
+  }
 }
 
 function reset() {
@@ -99,7 +106,7 @@ function handleClick(e)  {
 
   let newRow, newCol;
 
-  switch(state.mode) {
+  switch(state.clickMode) {
     case 1:
       // set new start point
       [newRow, newCol] = getCoord(e);
@@ -116,7 +123,7 @@ function handleClick(e)  {
       return;
   }
 
-  state.mode = 0;
+  state.clickMode = 0;
   drawBoard();
 }
 
