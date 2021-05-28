@@ -74,10 +74,28 @@ function setEnd() {
   state.clickMode = 2;
 }
 
+function setBFS() {
+  state.visualizeMode = 0;
+}
+
+function setDjikstra() {
+  state.visualizeMode = 1;
+}
+
+function setAStar() {
+  state.visualizeMode = 2;
+}
+
 function visualize() {
   switch(state.visualizeMode) {
     case 0:
       bfs();
+      break;
+    case 1:
+      djikstra();
+      break;
+    case 2:
+      astar();
       break;
     default:
       // do nothing
@@ -138,11 +156,10 @@ function bfs() {
     visited.add(cell.toString());
 
     if (cell.toString() === state.endPos.toString()) {
-      console.log(visited);
       return;
     }
 
-    for (let n of neighbors(cell[0], cell[1])) {
+    for (let n of getNeighbors(cell[0], cell[1])) {
       if (!visited.has(n.toString())) {
         visited.add(n.toString());
         queue.push(n);
@@ -154,9 +171,15 @@ function bfs() {
   }
 }
 
-function astar() {}
+function djikstra() {
+  alert("Not Yet Implemented");
+}
 
-function neighbors(x, y) {
+function astar() {
+  alert("Not Yet Implemented");
+}
+
+function getNeighbors(x, y) {
   const cells = [];
 
   if (x > 0) {
