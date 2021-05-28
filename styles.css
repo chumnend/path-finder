@@ -46,6 +46,10 @@ header {
   background-color: blue;
 }
 
+.obstacle {
+  background-color: black;
+}
+
 .start {
   background-color: green;
 }

@@ -1,7 +1,14 @@
 // INITALIZATION ==========================================
 window.addEventListener("load", function () {
-  init();
+  createBoard();
+  drawBoard();
 });
+
+const CELL_TYPE_NONE = 0;
+const CELL_TYPE_MARKED = 1;
+const CELL_TYPE_OBSTACLE = 2;
+const CELL_TYPE_START = 3;
+const CELL_TYPE_END = 4;
 
 const CLICK_MODE_OFF = 0;
 const CLICK_MODE_START = 1;
@@ -17,21 +24,6 @@ const state = {
   endPos: [9, 9],
 };
 
-function init() {
-  // create empty board
-  for (let i = 0; i < state.rowCount; i++) {
-    let row = [];
-    for (let j = 0; j < state.colCount; j++) {
-      row.push(false);
-    }
-
-    state.board.push(row);
-  }
-
-  // draw the initial empty board
-  drawBoard();
-}
-
 // BUTTON FUNCTIONS =======================================
 function setStart() {
   state.clickMode = CLICK_MODE_START;
@@ -45,7 +37,6 @@ function setEnd() {
 
 function setObstacle() {
   state.clickMode = CLICK_MODE_OBSTACLE;
-  clearBoard();
 }
 
 function solve() {
@@ -54,7 +45,7 @@ function solve() {
 
   // mark the path on the board
   for (let [i, j] of path) {
-    state.board[i][j] = true;
+    state.board[i][j] = CELL_TYPE_MARKED;
   }
 
   // draw the path
@@ -83,21 +74,24 @@ function handleClick(e) {
     return [row, col];
   };
 
-  let newRow, newCol;
+  let i, j;
 
   switch (state.clickMode) {
     case CLICK_MODE_START:
-      [newRow, newCol] = getCoord(e);
-      state.startPos[0] = newRow;
-      state.startPos[1] = newCol;
+      [i, j] = getCoord(e);
+      state.board[i][j] = CELL_TYPE_START;
+      state.startPos[0] = i;
+      state.startPos[1] = j;
       break;
     case CLICK_MODE_END:
-      [newRow, newCol] = getCoord(e);
-      state.endPos[0] = newRow;
-      state.endPos[1] = newCol;
+      [i, j] = getCoord(e);
+      state.board[i][j] = CELL_TYPE_END;
+      state.endPos[0] = i;
+      state.endPos[1] = j;
       break;
     case CLICK_MODE_OBSTACLE:
-      alert('Not Yet Implemented');
+      [i, j] = getCoord(e);
+      state.board[i][j] = CELL_TYPE_OBSTACLE;
       break;
     default:
       return;
@@ -190,10 +184,27 @@ function djikstra() {
 }
 
 // HELPERS ================================================
+function createBoard() {
+  // create empty board
+  for (let i = 0; i < state.rowCount; i++) {
+    let row = [];
+    for (let j = 0; j < state.colCount; j++) {
+      row.push(false);
+    }
+
+    state.board.push(row);
+  }
+}
+
 function drawBoard() {
   const table = document.getElementById("board");
   const tbody = document.createElement("tbody");
 
+  // mark start and end positions
+  state.board[state.startPos[0]][state.startPos[1]] = CELL_TYPE_START;
+  state.board[state.endPos[0]][state.endPos[1]] = CELL_TYPE_END;
+
+  // update each cell in table
   for (let i = 0; i < state.rowCount; i++) {
     const tr = document.createElement("tr");
 
@@ -202,18 +213,21 @@ function drawBoard() {
       td.setAttribute("id", `${i}-${j}`);
       td.addEventListener("click", handleClick);
 
-      let [startX, startY] = state.startPos;
-      if (i === startX && j === startY) {
-        td.classList.add("start");
-      }
-
-      let [endX, endY] = state.endPos;
-      if (i === endX && j === endY) {
-        td.classList.add("end");
-      }
-
-      if (state.board[i][j] == true) {
-        td.classList.add("visited");
+      switch (state.board[i][j]) {
+        case CELL_TYPE_MARKED:
+          td.classList.add("visited");
+          break;
+        case CELL_TYPE_OBSTACLE:
+          td.classList.add("obstacle");
+          break;
+        case CELL_TYPE_START:
+          td.classList.add("start");
+          break;
+        case CELL_TYPE_END:
+          td.classList.add("end");
+          break;
+        default:
+          break;
       }
 
       tr.appendChild(td);
@@ -229,7 +243,7 @@ function drawBoard() {
 function clearBoard() {
   for (let i = 0; i < state.rowCount; i++) {
     for (let j = 0; j < state.colCount; j++) {
-      state.board[i][j] = false;
+      state.board[i][j] = CELL_TYPE_NONE;
     }
   }
 }
