@@ -42,6 +42,9 @@ function setObstacle() {
 function solve() {
   // get the computed path
   const path = djikstra();
+  if(path.length === 0) {
+    alert('Unable to find a path');
+  }
 
   // mark the path on the board
   for (let [i, j] of path) {
@@ -141,11 +144,12 @@ function djikstra() {
   for (let i in state.board) {
     for (let j in state.board[0]) {
       const cell = [i, j];
+      const type = state.board[i][j];
 
       if (cell.toString() === state.startPos.toString()) {
         distances[cell.toString()] = 0;
         queue.enqueue(cell.toString(), 0);
-      } else {
+      } else if(type !== CELL_TYPE_OBSTACLE) {
         distances[cell.toString()] = Infinity;
         queue.enqueue(cell.toString(), Infinity);
       }
@@ -164,7 +168,8 @@ function djikstra() {
         path.push([i, j]);
         temp = previous[temp];
       }
-      break;
+      
+      return path.slice(1);
     }
 
     if (temp || distances[temp] !== Infinity) {
@@ -179,8 +184,6 @@ function djikstra() {
       }
     }
   }
-
-  return path;
 }
 
 // HELPERS ================================================
