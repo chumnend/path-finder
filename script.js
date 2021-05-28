@@ -30,18 +30,20 @@ function init() {
 // BUTTON FUNCTIONS =======================================
 function setStart() {
   state.clickMode = 1;
+  clearBoard();
 }
 
 function setEnd() {
   state.clickMode = 2;
+  clearBoard();
 }
 
 function solve() {
   // get the computed path
-  const path = bfs();
+  const path = djikstra();
 
   // mark the path on the board
-  for(let [i, j] of path) {
+  for (let [i, j] of path) {
     state.board[i][j] = true;
   }
 
@@ -50,12 +52,7 @@ function solve() {
 }
 
 function reset() {
-  for (let i = 0; i < state.rowCount; i++) {
-    for (let j = 0; j < state.colCount; j++) {
-      state.board[i][j] = false;
-    }
-  }
-
+  clearBoard();
   drawBoard();
 }
 
@@ -103,9 +100,9 @@ function bfs() {
     if (cell.toString() === state.endPos.toString()) {
       // convert the visited set into a path array
       const visitedCells = [];
-      for(let cell of visited) {
-        const [x, y] = cell.split(",");
-        visitedCells.push([parseInt(x), parseInt(y)]);
+      for (let cell of visited) {
+        const [i, j] = parseArrayString(cell);
+        visitedCells.push([i, j]);
       }
 
       return visitedCells;
@@ -121,7 +118,55 @@ function bfs() {
 }
 
 function djikstra() {
-  alert('Not Yet Implmented');
+  const queue = new PriorityQueue();
+  const distances = {}; // stores shortest distance to start
+  const previous = {}; // stores previous node to get to this node
+  const path = [];
+
+  // build initial state
+  for (let i in state.board) {
+    for (let j in state.board[0]) {
+      const cell = [i, j];
+
+      if (cell.toString() === state.startPos.toString()) {
+        distances[cell.toString()] = 0;
+        queue.enqueue(cell.toString(), 0);
+      } else {
+        distances[cell.toString()] = Infinity;
+        queue.enqueue(cell.toString(), Infinity);
+      }
+
+      previous[cell.toString] = null;
+    }
+  }
+
+  while (queue.size()) {
+    let temp = queue.dequeue();
+
+    // if at end, capture the path to get there and return
+    if (temp === state.endPos.toString()) {
+      while (previous[temp]) {
+        const [i, j] = parseArrayString(temp);
+        path.push([i, j]);
+        temp = previous[temp];
+      }
+      break;
+    }
+
+    if (temp || distances[temp] !== Infinity) {
+      const [i, j] = parseArrayString(temp);
+      for (let n of getNeighbors(i, j)) {
+        let distance = distances[temp] + 1;
+        if (distance < distances[n.toString()]) {
+          distances[n.toString()] = distance;
+          previous[n.toString()] = temp;
+          queue.enqueue(n.toString(), distance);
+        }
+      }
+    }
+  }
+
+  return path;
 }
 
 // HELPERS ================================================
@@ -161,6 +206,14 @@ function drawBoard() {
   table.appendChild(tbody);
 }
 
+function clearBoard() {
+  for (let i = 0; i < state.rowCount; i++) {
+    for (let j = 0; j < state.colCount; j++) {
+      state.board[i][j] = false;
+    }
+  }
+}
+
 function getNeighbors(x, y) {
   const cells = [];
 
@@ -181,4 +234,33 @@ function getNeighbors(x, y) {
   }
 
   return cells;
+}
+
+function parseArrayString(cell) {
+  const [i, j] = cell.split(",");
+  return [parseInt(i), parseInt(j)];
+}
+
+class PriorityQueue {
+  constructor() {
+    this.queue = [];
+  }
+
+  enqueue(value, priority) {
+    this.queue.push({ value, priority });
+    this.sort();
+  }
+
+  dequeue() {
+    if (!this.queue.length) return null;
+    return this.queue.shift().value;
+  }
+
+  sort() {
+    this.queue.sort((a, b) => a.priority - b.priority);
+  }
+
+  size() {
+    return this.queue.length;
+  }
 }
