@@ -3,8 +3,13 @@ window.addEventListener("load", function () {
   init();
 });
 
+const CLICK_MODE_OFF = 0;
+const CLICK_MODE_START = 1;
+const CLICK_MODE_END = 2;
+const CLICK_MODE_OBSTACLE = 3;
+
 const state = {
-  clickMode: 0, // 0 - no click, 1 - select start, 2 - select end
+  clickMode: CLICK_MODE_OFF,
   board: [],
   rowCount: 10,
   colCount: 10,
@@ -29,12 +34,17 @@ function init() {
 
 // BUTTON FUNCTIONS =======================================
 function setStart() {
-  state.clickMode = 1;
+  state.clickMode = CLICK_MODE_START;
   clearBoard();
 }
 
 function setEnd() {
-  state.clickMode = 2;
+  state.clickMode = CLICK_MODE_END;
+  clearBoard();
+}
+
+function setObstacle() {
+  state.clickMode = CLICK_MODE_OBSTACLE;
   clearBoard();
 }
 
@@ -53,6 +63,13 @@ function solve() {
 
 function reset() {
   clearBoard();
+
+  state.startPos[0] = 0;
+  state.startPos[1] = 0;
+
+  state.endPos[0] = 9;
+  state.endPos[1] = 9;
+
   drawBoard();
 }
 
@@ -69,21 +86,24 @@ function handleClick(e) {
   let newRow, newCol;
 
   switch (state.clickMode) {
-    case 1: // set start position
+    case CLICK_MODE_START:
       [newRow, newCol] = getCoord(e);
       state.startPos[0] = newRow;
       state.startPos[1] = newCol;
       break;
-    case 2: // set end position
+    case CLICK_MODE_END:
       [newRow, newCol] = getCoord(e);
       state.endPos[0] = newRow;
       state.endPos[1] = newCol;
+      break;
+    case CLICK_MODE_OBSTACLE:
+      alert('Not Yet Implemented');
       break;
     default:
       return;
   }
 
-  state.clickMode = 0;
+  state.clickMode = CLICK_MODE_OFF;
   drawBoard();
 }
 
