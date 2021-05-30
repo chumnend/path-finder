@@ -42,8 +42,8 @@ function setObstacle() {
 function solve() {
   // get the computed path
   const path = djikstra();
-  if(path.length === 0) {
-    alert('Unable to find a path');
+  if (path.length === 0) {
+    alert("Unable to find a path");
   }
 
   // mark the path on the board
@@ -68,7 +68,7 @@ function reset() {
 }
 
 // CLICK FUNCTIONS ========================================
-function handleClick(e) {
+function handleCellClick(e) {
   const getCoord = (e) => {
     const coord = e.target.id.split("-");
     const row = parseInt(coord[0]);
@@ -94,13 +94,18 @@ function handleClick(e) {
       break;
     case CLICK_MODE_OBSTACLE:
       [i, j] = getCoord(e);
-      state.board[i][j] = CELL_TYPE_OBSTACLE;
+      state.board[i][j] =
+        (state.board[i][j] === CELL_TYPE_NONE)
+          ? CELL_TYPE_OBSTACLE
+          : CELL_TYPE_NONE;
       break;
     default:
       return;
   }
 
   state.clickMode = CLICK_MODE_OFF;
+
+  clearMarked();
   drawBoard();
 }
 
@@ -149,7 +154,7 @@ function djikstra() {
       if (cell.toString() === state.startPos.toString()) {
         distances[cell.toString()] = 0;
         queue.enqueue(cell.toString(), 0);
-      } else if(type !== CELL_TYPE_OBSTACLE) {
+      } else if (type !== CELL_TYPE_OBSTACLE) {
         distances[cell.toString()] = Infinity;
         queue.enqueue(cell.toString(), Infinity);
       }
@@ -168,7 +173,7 @@ function djikstra() {
         path.push([i, j]);
         temp = previous[temp];
       }
-      
+
       return path.slice(1);
     }
 
@@ -192,7 +197,7 @@ function createBoard() {
   for (let i = 0; i < state.rowCount; i++) {
     let row = [];
     for (let j = 0; j < state.colCount; j++) {
-      row.push(false);
+      row.push(CELL_TYPE_NONE);
     }
 
     state.board.push(row);
@@ -214,7 +219,7 @@ function drawBoard() {
     for (let j = 0; j < state.colCount; j++) {
       const td = document.createElement("td");
       td.setAttribute("id", `${i}-${j}`);
-      td.addEventListener("click", handleClick);
+      td.addEventListener("click", handleCellClick);
 
       switch (state.board[i][j]) {
         case CELL_TYPE_MARKED:
@@ -247,6 +252,16 @@ function clearBoard() {
   for (let i = 0; i < state.rowCount; i++) {
     for (let j = 0; j < state.colCount; j++) {
       state.board[i][j] = CELL_TYPE_NONE;
+    }
+  }
+}
+
+function clearMarked() {
+  for (let i = 0; i < state.rowCount; i++) {
+    for (let j = 0; j < state.colCount; j++) {
+      if (state.board[i][j] === CELL_TYPE_MARKED) {
+        state.board[i][j] = CELL_TYPE_NONE;
+      }
     }
   }
 }

@@ -1,29 +1,32 @@
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="visualiztion of path finding algorithms" />
-    <link rel="stylesheet" href="styles.css" />
 
-    <title>Path Finder Visualizer</title>
-  </head>
-  <body>
-    <header>
-      <!-- Visualizer Settings -->
-      <h1>Path Finder Visualizer</h1>
-    </header>
-    <main>
-      <!-- Path Finder Visualization -->
-      <table id="board"></table>
-      <div class="btn-group">
-        <button onclick="setStart()">Set Start</button>
-        <button onclick="setEnd()">Set End</button>
-        <button onclick="setObstacle()">Set Obstacle</button>
-        <button onclick="solve()">Solve</button>
-        <button onclick="reset()">Reset</button>
-      </div>
-    </main>
-    <script src="script.js"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="visualiztion of path finding algorithms" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <title>Path Finder Visualizer</title>
+</head>
+
+<body>
+  <header>
+    <!-- Visualizer Settings -->
+    <h1>Path Finder Visualizer</h1>
+  </header>
+  <main>
+    <!-- Path Finder Visualization -->
+    <table id="board"></table>
+    <div class="btn-group">
+      <button class="toggle-button" onclick="setStart()">Set Start</button>
+      <button class="toggle-button" onclick="setEnd()">Set End</button>
+      <button class="toggle-button" onclick="setObstacle()">Add/Remove Obstacle</button>
+      <button onclick="solve()">Solve</button>
+      <button onclick="reset()">Reset</button>
+    </div>
+  </main>
+  <script src="script.js"></script>
+</body>
+
 </html>
